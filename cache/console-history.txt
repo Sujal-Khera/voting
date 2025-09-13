@@ -1,0 +1,9 @@
+npx hardhat run scripts/test-contract.js --network localhost
+await run("scripts/deploy.js")
+await run("compile")
+await voting.getResults()
+await voting.vote(1)
+const voting = await Voting.attach("0xYourContractAddressHere")
+const Voting = await ethers.getContractFactory("Voting")
+await ethers.getSigners()
+.help

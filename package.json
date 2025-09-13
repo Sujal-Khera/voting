@@ -1,0 +1,30 @@
+{
+  "name": "blockchain-voting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.ts --network localhost",
+    "node": "npx hardhat node --hostname 0.0.0.0",
+    "start-node": "npx hardhat node --hostname 0.0.0.0",
+    "clean": "npx hardhat clean",
+    "start-frontend": "cd voting-frontend && npm start",
+    "build-frontend": "cd voting-frontend && npm run build",
+    "test-frontend": "cd voting-frontend && npm test",
+    "dev": "concurrently \"npm run start-node\" \"sleep 3 && npm run deploy\" \"sleep 5 && npm run start-frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "concurrently": "^9.2.1",
+    "hardhat": "^2.26.3"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0"
+  }
+}
