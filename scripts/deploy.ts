@@ -11,9 +11,9 @@ async function main() {
   const election = await CommitRevealElection.deploy();
 
   // Wait for deployment to finish
-  await election.waitForDeployment();
+  await election.deployed();
 
-  const contractAddress = await election.getAddress();
+  const contractAddress = election.address;
   
   console.log("CommitRevealElection deployed to:", contractAddress);
   console.log("Contract address:", contractAddress);

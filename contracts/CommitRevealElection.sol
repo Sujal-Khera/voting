@@ -17,45 +17,23 @@ contract CommitRevealElection {
         bytes32 commitHash;
         bool revealed;
         uint256 candidateId;
-        uint256 depositAmount;
-    }
-    
-    struct Election {
-        uint256 electionId;
-        uint256 candidateCount;
-        uint256 voterCount;
-        uint256 totalCommits;
-        uint256 totalRevealed;
-        uint256 winnerId;
-        string winnerName;
-        uint256 winnerVotes;
-        uint256 timestamp;
     }
     
     mapping(uint256 => Candidate) public candidates;
     mapping(address => bool) public registeredVoters;
     mapping(address => Commit) public commits;
-    mapping(uint256 => Election) public elections;
     
     uint256 public candidateCount;
     uint256 public voterCount;
     uint256 public totalCommits;
     uint256 public totalRevealed;
-    uint256 public electionId;
-    uint256 public resetRequestTime;
-    uint256 public constant RESET_COOLDOWN = 60; // 1 minute cooldown
-    uint256 public constant MIN_DEPOSIT = 0.001 ether; // Minimum deposit for voting
     
     // Events for transparency and auditability
     event CandidateAdded(uint256 indexed candidateId, string name);
     event VoterRegistered(address indexed voter);
-    event VoteCommitted(address indexed voter, bytes32 commitHash, uint256 depositAmount);
-    event VoteRevealed(address indexed voter, uint256 candidateId, uint256 refundAmount);
+    event VoteCommitted(address indexed voter, bytes32 commitHash);
+    event VoteRevealed(address indexed voter, uint256 candidateId);
     event StageChanged(Stage newStage);
-    event ElectionResetRequested(uint256 timestamp);
-    event ElectionReset(uint256 indexed electionId, uint256 timestamp);
-    event DepositRefunded(address indexed voter, uint256 amount);
-    event DepositForfeited(address indexed voter, uint256 amount);
     
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin can call this function");
@@ -73,19 +51,8 @@ contract CommitRevealElection {
     }
     
     constructor() {
-        admin = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // Updated admin address
+        admin = msg.sender;
         currentStage = Stage.Setup;
-        electionId = 1;
-    }
-    
-    modifier requiresDeposit() {
-        require(msg.value >= MIN_DEPOSIT, "Insufficient deposit for voting");
-        _;
-    }
-    
-    modifier resetCooldownPassed() {
-        require(block.timestamp >= resetRequestTime + RESET_COOLDOWN, "Reset cooldown not passed");
-        _;
     }
     
     // Admin Functions
@@ -93,18 +60,6 @@ contract CommitRevealElection {
         candidateCount++;
         candidates[candidateCount] = Candidate(candidateCount, _name, 0);
         emit CandidateAdded(candidateCount, _name);
-    }
-    
-    // Batch operations for gas optimization
-    function addMultipleCandidates(string[] memory _names) external onlyAdmin atStage(Stage.Setup) {
-        require(_names.length > 0, "No candidates provided");
-        require(_names.length <= 50, "Too many candidates (max 50)");
-        
-        for (uint256 i = 0; i < _names.length; i++) {
-            candidateCount++;
-            candidates[candidateCount] = Candidate(candidateCount, _names[i], 0);
-            emit CandidateAdded(candidateCount, _names[i]);
-        }
     }
     
     function registerVoter(address _voter) external onlyAdmin atStage(Stage.Setup) {
@@ -115,14 +70,12 @@ contract CommitRevealElection {
     }
     
     function registerMultipleVoters(address[] memory _voters) external onlyAdmin atStage(Stage.Setup) {
-        require(_voters.length > 0, "No voters provided");
-        require(_voters.length <= 100, "Too many voters (max 100)");
-        
         for (uint256 i = 0; i < _voters.length; i++) {
-            require(!registeredVoters[_voters[i]], "Voter already registered");
-            registeredVoters[_voters[i]] = true;
-            voterCount++;
-            emit VoterRegistered(_voters[i]);
+            if (!registeredVoters[_voters[i]]) {
+                registeredVoters[_voters[i]] = true;
+                voterCount++;
+                emit VoterRegistered(_voters[i]);
+            }
         }
     }
     
@@ -143,14 +96,13 @@ contract CommitRevealElection {
     }
     
     // Voter Functions
-    function commitVote(bytes32 _commitHash) external payable onlyRegisteredVoter atStage(Stage.Commit) requiresDeposit {
+    function commitVote(bytes32 _commitHash) external onlyRegisteredVoter atStage(Stage.Commit) {
         require(commits[msg.sender].commitHash == bytes32(0), "You have already committed your vote");
         
         commits[msg.sender].commitHash = _commitHash;
-        commits[msg.sender].depositAmount = msg.value;
         totalCommits++;
         
-        emit VoteCommitted(msg.sender, _commitHash, msg.value);
+        emit VoteCommitted(msg.sender, _commitHash);
     }
     
     function revealVote(uint256 _candidateId, uint256 _secret) external onlyRegisteredVoter atStage(Stage.Reveal) {
@@ -168,15 +120,7 @@ contract CommitRevealElection {
         candidates[_candidateId].voteCount++;
         totalRevealed++;
         
-        // Refund the deposit
-        uint256 refundAmount = commits[msg.sender].depositAmount;
-        if (refundAmount > 0) {
-            commits[msg.sender].depositAmount = 0;
-            payable(msg.sender).transfer(refundAmount);
-            emit DepositRefunded(msg.sender, refundAmount);
-        }
-        
-        emit VoteRevealed(msg.sender, _candidateId, refundAmount);
+        emit VoteRevealed(msg.sender, _candidateId);
     }
     
     // View Functions
@@ -236,44 +180,9 @@ contract CommitRevealElection {
         return commits[_voter].revealed;
     }
     
-    // Request election reset - starts cooldown timer
-    function requestElectionReset() external onlyAdmin {
+    // Reset election function - only admin can call
+    function resetElection() external onlyAdmin {
         require(currentStage == Stage.Finished, "Can only reset after election is finished");
-        resetRequestTime = block.timestamp;
-        emit ElectionResetRequested(block.timestamp);
-    }
-    
-    // Execute election reset - only after cooldown
-    function executeElectionReset() external onlyAdmin resetCooldownPassed {
-        require(currentStage == Stage.Finished, "Can only reset after election is finished");
-        
-        // Store current election results in history before reset
-        uint256 winnerId = 0;
-        uint256 maxVotes = 0;
-        string memory winnerName = "";
-        
-        if (candidateCount > 0) {
-            for (uint256 i = 1; i <= candidateCount; i++) {
-                if (candidates[i].voteCount > maxVotes) {
-                    maxVotes = candidates[i].voteCount;
-                    winnerId = i;
-                    winnerName = candidates[i].name;
-                }
-            }
-        }
-        
-        // Store election in history
-        elections[electionId] = Election({
-            electionId: electionId,
-            candidateCount: candidateCount,
-            voterCount: voterCount,
-            totalCommits: totalCommits,
-            totalRevealed: totalRevealed,
-            winnerId: winnerId,
-            winnerName: winnerName,
-            winnerVotes: maxVotes,
-            timestamp: block.timestamp
-        });
         
         // Reset all counters
         candidateCount = 0;
@@ -283,45 +192,14 @@ contract CommitRevealElection {
         
         // Reset stage to Setup
         currentStage = Stage.Setup;
-        electionId++;
         
-        emit ElectionReset(electionId - 1, block.timestamp);
+        // Clear all candidates (we can't delete mappings, but we reset the counter)
+        // The old candidate data will be overwritten when new candidates are added
+        
+        // Note: We can't clear the commits and registeredVoters mappings efficiently
+        // This is a limitation of Solidity - mappings can't be cleared in a single operation
+        // In a production system, you might want to deploy a new contract for each election
+        
         emit StageChanged(currentStage);
-    }
-    
-    // Forfeit deposits for voters who didn't reveal
-    function forfeitUnrevealedDeposits() external onlyAdmin {
-        require(currentStage == Stage.Finished, "Can only forfeit after election is finished");
-        
-        // This would require iterating through all voters, which is gas-intensive
-        // In a production system, you might want to implement a more efficient approach
-        // For now, we'll leave this as a placeholder
-    }
-    
-    // View functions for transparency
-    function getElectionHistory(uint256 _electionId) external view returns (Election memory) {
-        return elections[_electionId];
-    }
-    
-    function getResetCooldownRemaining() external view returns (uint256) {
-        if (resetRequestTime == 0) return 0;
-        uint256 elapsed = block.timestamp - resetRequestTime;
-        return elapsed >= RESET_COOLDOWN ? 0 : RESET_COOLDOWN - elapsed;
-    }
-    
-    function getVoterDeposit(address _voter) external view returns (uint256) {
-        return commits[_voter].depositAmount;
-    }
-    
-    function getUnrevealedVoters() external view returns (address[] memory) {
-        // This is a placeholder - in production, you'd need to track unrevealed voters
-        // For now, return empty array
-        address[] memory unrevealed = new address[](0);
-        return unrevealed;
-    }
-    
-    // Emergency function to withdraw contract balance (only admin)
-    function withdrawBalance() external onlyAdmin {
-        payable(admin).transfer(address(this).balance);
     }
 }

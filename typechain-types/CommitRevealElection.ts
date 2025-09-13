@@ -35,49 +35,12 @@ export declare namespace CommitRevealElection {
     name: string,
     voteCount: bigint
   ] & { id: bigint; name: string; voteCount: bigint };
-
-  export type ElectionStruct = {
-    electionId: BigNumberish;
-    candidateCount: BigNumberish;
-    voterCount: BigNumberish;
-    totalCommits: BigNumberish;
-    totalRevealed: BigNumberish;
-    winnerId: BigNumberish;
-    winnerName: string;
-    winnerVotes: BigNumberish;
-    timestamp: BigNumberish;
-  };
-
-  export type ElectionStructOutput = [
-    electionId: bigint,
-    candidateCount: bigint,
-    voterCount: bigint,
-    totalCommits: bigint,
-    totalRevealed: bigint,
-    winnerId: bigint,
-    winnerName: string,
-    winnerVotes: bigint,
-    timestamp: bigint
-  ] & {
-    electionId: bigint;
-    candidateCount: bigint;
-    voterCount: bigint;
-    totalCommits: bigint;
-    totalRevealed: bigint;
-    winnerId: bigint;
-    winnerName: string;
-    winnerVotes: bigint;
-    timestamp: bigint;
-  };
 }
 
 export interface CommitRevealElectionInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "MIN_DEPOSIT"
-      | "RESET_COOLDOWN"
       | "addCandidate"
-      | "addMultipleCandidates"
       | "admin"
       | "advanceStage"
       | "candidateCount"
@@ -85,19 +48,11 @@ export interface CommitRevealElectionInterface extends Interface {
       | "commitVote"
       | "commits"
       | "currentStage"
-      | "electionId"
-      | "elections"
-      | "executeElectionReset"
-      | "forfeitUnrevealedDeposits"
       | "generateCommitHash"
       | "getAllCandidates"
       | "getCandidate"
-      | "getElectionHistory"
       | "getElectionStats"
-      | "getResetCooldownRemaining"
-      | "getUnrevealedVoters"
       | "getVoterCommit"
-      | "getVoterDeposit"
       | "getWinner"
       | "hasVoterCommitted"
       | "hasVoterRevealed"
@@ -105,22 +60,16 @@ export interface CommitRevealElectionInterface extends Interface {
       | "registerMultipleVoters"
       | "registerVoter"
       | "registeredVoters"
-      | "requestElectionReset"
-      | "resetRequestTime"
+      | "resetElection"
       | "revealVote"
       | "totalCommits"
       | "totalRevealed"
       | "voterCount"
-      | "withdrawBalance"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "CandidateAdded"
-      | "DepositForfeited"
-      | "DepositRefunded"
-      | "ElectionReset"
-      | "ElectionResetRequested"
       | "StageChanged"
       | "VoteCommitted"
       | "VoteRevealed"
@@ -128,20 +77,8 @@ export interface CommitRevealElectionInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "MIN_DEPOSIT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "RESET_COOLDOWN",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "addCandidate",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addMultipleCandidates",
-    values: [string[]]
   ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
@@ -169,22 +106,6 @@ export interface CommitRevealElectionInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "electionId",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "elections",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeElectionReset",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "forfeitUnrevealedDeposits",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "generateCommitHash",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -197,27 +118,11 @@ export interface CommitRevealElectionInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getElectionHistory",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getElectionStats",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getResetCooldownRemaining",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getUnrevealedVoters",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getVoterCommit",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVoterDeposit",
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "getWinner", values?: undefined): string;
@@ -246,11 +151,7 @@ export interface CommitRevealElectionInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "requestElectionReset",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "resetRequestTime",
+    functionFragment: "resetElection",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -269,25 +170,9 @@ export interface CommitRevealElectionInterface extends Interface {
     functionFragment: "voterCount",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawBalance",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
-    functionFragment: "MIN_DEPOSIT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "RESET_COOLDOWN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "addCandidate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addMultipleCandidates",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -306,16 +191,6 @@ export interface CommitRevealElectionInterface extends Interface {
     functionFragment: "currentStage",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "electionId", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "elections", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "executeElectionReset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "forfeitUnrevealedDeposits",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "generateCommitHash",
     data: BytesLike
@@ -329,27 +204,11 @@ export interface CommitRevealElectionInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getElectionHistory",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getElectionStats",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getResetCooldownRemaining",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getUnrevealedVoters",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getVoterCommit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVoterDeposit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getWinner", data: BytesLike): Result;
@@ -378,11 +237,7 @@ export interface CommitRevealElectionInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requestElectionReset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "resetRequestTime",
+    functionFragment: "resetElection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revealVote", data: BytesLike): Result;
@@ -395,10 +250,6 @@ export interface CommitRevealElectionInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "voterCount", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawBalance",
-    data: BytesLike
-  ): Result;
 }
 
 export namespace CandidateAddedEvent {
@@ -407,57 +258,6 @@ export namespace CandidateAddedEvent {
   export interface OutputObject {
     candidateId: bigint;
     name: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DepositForfeitedEvent {
-  export type InputTuple = [voter: AddressLike, amount: BigNumberish];
-  export type OutputTuple = [voter: string, amount: bigint];
-  export interface OutputObject {
-    voter: string;
-    amount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DepositRefundedEvent {
-  export type InputTuple = [voter: AddressLike, amount: BigNumberish];
-  export type OutputTuple = [voter: string, amount: bigint];
-  export interface OutputObject {
-    voter: string;
-    amount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ElectionResetEvent {
-  export type InputTuple = [electionId: BigNumberish, timestamp: BigNumberish];
-  export type OutputTuple = [electionId: bigint, timestamp: bigint];
-  export interface OutputObject {
-    electionId: bigint;
-    timestamp: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ElectionResetRequestedEvent {
-  export type InputTuple = [timestamp: BigNumberish];
-  export type OutputTuple = [timestamp: bigint];
-  export interface OutputObject {
-    timestamp: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -478,20 +278,11 @@ export namespace StageChangedEvent {
 }
 
 export namespace VoteCommittedEvent {
-  export type InputTuple = [
-    voter: AddressLike,
-    commitHash: BytesLike,
-    depositAmount: BigNumberish
-  ];
-  export type OutputTuple = [
-    voter: string,
-    commitHash: string,
-    depositAmount: bigint
-  ];
+  export type InputTuple = [voter: AddressLike, commitHash: BytesLike];
+  export type OutputTuple = [voter: string, commitHash: string];
   export interface OutputObject {
     voter: string;
     commitHash: string;
-    depositAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -500,20 +291,11 @@ export namespace VoteCommittedEvent {
 }
 
 export namespace VoteRevealedEvent {
-  export type InputTuple = [
-    voter: AddressLike,
-    candidateId: BigNumberish,
-    refundAmount: BigNumberish
-  ];
-  export type OutputTuple = [
-    voter: string,
-    candidateId: bigint,
-    refundAmount: bigint
-  ];
+  export type InputTuple = [voter: AddressLike, candidateId: BigNumberish];
+  export type OutputTuple = [voter: string, candidateId: bigint];
   export interface OutputObject {
     voter: string;
     candidateId: bigint;
-    refundAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -576,17 +358,7 @@ export interface CommitRevealElection extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  MIN_DEPOSIT: TypedContractMethod<[], [bigint], "view">;
-
-  RESET_COOLDOWN: TypedContractMethod<[], [bigint], "view">;
-
   addCandidate: TypedContractMethod<[_name: string], [void], "nonpayable">;
-
-  addMultipleCandidates: TypedContractMethod<
-    [_names: string[]],
-    [void],
-    "nonpayable"
-  >;
 
   admin: TypedContractMethod<[], [string], "view">;
 
@@ -602,56 +374,25 @@ export interface CommitRevealElection extends BaseContract {
     "view"
   >;
 
-  commitVote: TypedContractMethod<[_commitHash: BytesLike], [void], "payable">;
+  commitVote: TypedContractMethod<
+    [_commitHash: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
   commits: TypedContractMethod<
     [arg0: AddressLike],
     [
-      [string, boolean, bigint, bigint] & {
+      [string, boolean, bigint] & {
         commitHash: string;
         revealed: boolean;
         candidateId: bigint;
-        depositAmount: bigint;
       }
     ],
     "view"
   >;
 
   currentStage: TypedContractMethod<[], [bigint], "view">;
-
-  electionId: TypedContractMethod<[], [bigint], "view">;
-
-  elections: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        string,
-        bigint,
-        bigint
-      ] & {
-        electionId: bigint;
-        candidateCount: bigint;
-        voterCount: bigint;
-        totalCommits: bigint;
-        totalRevealed: bigint;
-        winnerId: bigint;
-        winnerName: string;
-        winnerVotes: bigint;
-        timestamp: bigint;
-      }
-    ],
-    "view"
-  >;
-
-  executeElectionReset: TypedContractMethod<[], [void], "nonpayable">;
-
-  forfeitUnrevealedDeposits: TypedContractMethod<[], [void], "nonpayable">;
 
   generateCommitHash: TypedContractMethod<
     [_candidateId: BigNumberish, _secret: BigNumberish],
@@ -671,29 +412,17 @@ export interface CommitRevealElection extends BaseContract {
     "view"
   >;
 
-  getElectionHistory: TypedContractMethod<
-    [_electionId: BigNumberish],
-    [CommitRevealElection.ElectionStructOutput],
-    "view"
-  >;
-
   getElectionStats: TypedContractMethod<
     [],
     [[bigint, bigint, bigint, bigint, bigint]],
     "view"
   >;
 
-  getResetCooldownRemaining: TypedContractMethod<[], [bigint], "view">;
-
-  getUnrevealedVoters: TypedContractMethod<[], [string[]], "view">;
-
   getVoterCommit: TypedContractMethod<
     [_voter: AddressLike],
     [[string, boolean, bigint]],
     "view"
   >;
-
-  getVoterDeposit: TypedContractMethod<[_voter: AddressLike], [bigint], "view">;
 
   getWinner: TypedContractMethod<[], [[bigint, string, bigint]], "view">;
 
@@ -729,9 +458,7 @@ export interface CommitRevealElection extends BaseContract {
 
   registeredVoters: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
 
-  requestElectionReset: TypedContractMethod<[], [void], "nonpayable">;
-
-  resetRequestTime: TypedContractMethod<[], [bigint], "view">;
+  resetElection: TypedContractMethod<[], [void], "nonpayable">;
 
   revealVote: TypedContractMethod<
     [_candidateId: BigNumberish, _secret: BigNumberish],
@@ -745,24 +472,13 @@ export interface CommitRevealElection extends BaseContract {
 
   voterCount: TypedContractMethod<[], [bigint], "view">;
 
-  withdrawBalance: TypedContractMethod<[], [void], "nonpayable">;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "MIN_DEPOSIT"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "RESET_COOLDOWN"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "addCandidate"
   ): TypedContractMethod<[_name: string], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "addMultipleCandidates"
-  ): TypedContractMethod<[_names: string[]], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "admin"
   ): TypedContractMethod<[], [string], "view">;
@@ -783,17 +499,16 @@ export interface CommitRevealElection extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "commitVote"
-  ): TypedContractMethod<[_commitHash: BytesLike], [void], "payable">;
+  ): TypedContractMethod<[_commitHash: BytesLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "commits"
   ): TypedContractMethod<
     [arg0: AddressLike],
     [
-      [string, boolean, bigint, bigint] & {
+      [string, boolean, bigint] & {
         commitHash: string;
         revealed: boolean;
         candidateId: bigint;
-        depositAmount: bigint;
       }
     ],
     "view"
@@ -801,44 +516,6 @@ export interface CommitRevealElection extends BaseContract {
   getFunction(
     nameOrSignature: "currentStage"
   ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "electionId"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "elections"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        string,
-        bigint,
-        bigint
-      ] & {
-        electionId: bigint;
-        candidateCount: bigint;
-        voterCount: bigint;
-        totalCommits: bigint;
-        totalRevealed: bigint;
-        winnerId: bigint;
-        winnerName: string;
-        winnerVotes: bigint;
-        timestamp: bigint;
-      }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "executeElectionReset"
-  ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "forfeitUnrevealedDeposits"
-  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "generateCommitHash"
   ): TypedContractMethod<
@@ -861,13 +538,6 @@ export interface CommitRevealElection extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getElectionHistory"
-  ): TypedContractMethod<
-    [_electionId: BigNumberish],
-    [CommitRevealElection.ElectionStructOutput],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "getElectionStats"
   ): TypedContractMethod<
     [],
@@ -875,21 +545,12 @@ export interface CommitRevealElection extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getResetCooldownRemaining"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getUnrevealedVoters"
-  ): TypedContractMethod<[], [string[]], "view">;
-  getFunction(
     nameOrSignature: "getVoterCommit"
   ): TypedContractMethod<
     [_voter: AddressLike],
     [[string, boolean, bigint]],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "getVoterDeposit"
-  ): TypedContractMethod<[_voter: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "getWinner"
   ): TypedContractMethod<[], [[bigint, string, bigint]], "view">;
@@ -912,11 +573,8 @@ export interface CommitRevealElection extends BaseContract {
     nameOrSignature: "registeredVoters"
   ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "requestElectionReset"
+    nameOrSignature: "resetElection"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "resetRequestTime"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "revealVote"
   ): TypedContractMethod<
@@ -933,9 +591,6 @@ export interface CommitRevealElection extends BaseContract {
   getFunction(
     nameOrSignature: "voterCount"
   ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "withdrawBalance"
-  ): TypedContractMethod<[], [void], "nonpayable">;
 
   getEvent(
     key: "CandidateAdded"
@@ -943,34 +598,6 @@ export interface CommitRevealElection extends BaseContract {
     CandidateAddedEvent.InputTuple,
     CandidateAddedEvent.OutputTuple,
     CandidateAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DepositForfeited"
-  ): TypedContractEvent<
-    DepositForfeitedEvent.InputTuple,
-    DepositForfeitedEvent.OutputTuple,
-    DepositForfeitedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DepositRefunded"
-  ): TypedContractEvent<
-    DepositRefundedEvent.InputTuple,
-    DepositRefundedEvent.OutputTuple,
-    DepositRefundedEvent.OutputObject
-  >;
-  getEvent(
-    key: "ElectionReset"
-  ): TypedContractEvent<
-    ElectionResetEvent.InputTuple,
-    ElectionResetEvent.OutputTuple,
-    ElectionResetEvent.OutputObject
-  >;
-  getEvent(
-    key: "ElectionResetRequested"
-  ): TypedContractEvent<
-    ElectionResetRequestedEvent.InputTuple,
-    ElectionResetRequestedEvent.OutputTuple,
-    ElectionResetRequestedEvent.OutputObject
   >;
   getEvent(
     key: "StageChanged"
@@ -1013,50 +640,6 @@ export interface CommitRevealElection extends BaseContract {
       CandidateAddedEvent.OutputObject
     >;
 
-    "DepositForfeited(address,uint256)": TypedContractEvent<
-      DepositForfeitedEvent.InputTuple,
-      DepositForfeitedEvent.OutputTuple,
-      DepositForfeitedEvent.OutputObject
-    >;
-    DepositForfeited: TypedContractEvent<
-      DepositForfeitedEvent.InputTuple,
-      DepositForfeitedEvent.OutputTuple,
-      DepositForfeitedEvent.OutputObject
-    >;
-
-    "DepositRefunded(address,uint256)": TypedContractEvent<
-      DepositRefundedEvent.InputTuple,
-      DepositRefundedEvent.OutputTuple,
-      DepositRefundedEvent.OutputObject
-    >;
-    DepositRefunded: TypedContractEvent<
-      DepositRefundedEvent.InputTuple,
-      DepositRefundedEvent.OutputTuple,
-      DepositRefundedEvent.OutputObject
-    >;
-
-    "ElectionReset(uint256,uint256)": TypedContractEvent<
-      ElectionResetEvent.InputTuple,
-      ElectionResetEvent.OutputTuple,
-      ElectionResetEvent.OutputObject
-    >;
-    ElectionReset: TypedContractEvent<
-      ElectionResetEvent.InputTuple,
-      ElectionResetEvent.OutputTuple,
-      ElectionResetEvent.OutputObject
-    >;
-
-    "ElectionResetRequested(uint256)": TypedContractEvent<
-      ElectionResetRequestedEvent.InputTuple,
-      ElectionResetRequestedEvent.OutputTuple,
-      ElectionResetRequestedEvent.OutputObject
-    >;
-    ElectionResetRequested: TypedContractEvent<
-      ElectionResetRequestedEvent.InputTuple,
-      ElectionResetRequestedEvent.OutputTuple,
-      ElectionResetRequestedEvent.OutputObject
-    >;
-
     "StageChanged(uint8)": TypedContractEvent<
       StageChangedEvent.InputTuple,
       StageChangedEvent.OutputTuple,
@@ -1068,7 +651,7 @@ export interface CommitRevealElection extends BaseContract {
       StageChangedEvent.OutputObject
     >;
 
-    "VoteCommitted(address,bytes32,uint256)": TypedContractEvent<
+    "VoteCommitted(address,bytes32)": TypedContractEvent<
       VoteCommittedEvent.InputTuple,
       VoteCommittedEvent.OutputTuple,
       VoteCommittedEvent.OutputObject
@@ -1079,7 +662,7 @@ export interface CommitRevealElection extends BaseContract {
       VoteCommittedEvent.OutputObject
     >;
 
-    "VoteRevealed(address,uint256,uint256)": TypedContractEvent<
+    "VoteRevealed(address,uint256)": TypedContractEvent<
       VoteRevealedEvent.InputTuple,
       VoteRevealedEvent.OutputTuple,
       VoteRevealedEvent.OutputObject

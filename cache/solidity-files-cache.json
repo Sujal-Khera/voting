@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/aaravkohli/blockchain-voting/contracts/CommitRevealElection.sol": {
-      "lastModificationDate": 1757764670713,
-      "contentHash": "fd3359e7bd1848aa41a670d669f3466f",
+      "lastModificationDate": 1757777872793,
+      "contentHash": "64ba4cd40e4d60c0ac22fcb6bcfc5113",
       "sourceName": "contracts/CommitRevealElection.sol",
       "solcConfig": {
         "version": "0.8.19",

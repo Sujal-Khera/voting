@@ -1,3 +1,6 @@
+npm install --save-dev @nomiclabs/hardhat-ethers ethers
+await election.currentStage();
+const election = await ethers.getContractAt("CommitRevealElection", "<contract-address>");
 npx hardhat run scripts/test-contract.js --network localhost
 await run("scripts/deploy.js")
 await run("compile")
